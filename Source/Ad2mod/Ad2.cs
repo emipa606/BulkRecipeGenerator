@@ -1,4 +1,4 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 using System.Reflection;
 using RimWorld;
 using Verse;
@@ -37,15 +37,14 @@ namespace Ad2mod
     {
         public static Ad2Settings settings;
         public static Ad2Mod instance;
-
-        NumField defaultThresholdField = new NumField();
-        NumField thresholdField = new NumField();
+        readonly NumField defaultThresholdField = new NumField();
+        readonly NumField thresholdField = new NumField();
         //Game lastGame;
 
         class NumField
         {
             string buffer;
-            int min, max;
+            readonly int min, max;
 
             public NumField(int min = 0, int max = 120)
             {
@@ -58,9 +57,12 @@ namespace Ad2mod
             }
             public bool DoField(float y, string label, ref int val)
             {
-                float LH = Text.LineHeight;
+                var LH = Text.LineHeight;
                 if (buffer == null)
+                {
                     buffer = val.ToString();
+                }
+
                 float x = 0;
                 TextAnchor anchor = Text.Anchor;
                 Text.Anchor = TextAnchor.MiddleLeft;
@@ -71,8 +73,7 @@ namespace Ad2mod
                 x += 60;
                 if (Widgets.ButtonText(new Rect(x, y, 100, LH), "Apply"))
                 {
-                    int resInt;
-                    if (int.TryParse(buffer, out resInt))
+                    if (int.TryParse(buffer, out var resInt))
                     {
                         val = Util.Clamp(resInt, min, max);
                         buffer = val.ToString();
@@ -90,13 +91,16 @@ namespace Ad2mod
             settings = GetSettings<Ad2Settings>();
         }
 
-        public override string SettingsCategory() => "Bulk recipe generator";
+        public override string SettingsCategory()
+        {
+            return "Bulk recipe generator";
+        }
 
         public override void DoSettingsWindowContents(Rect inRect)
         {
-            float x = inRect.x;
-            float y = inRect.y;
-            float LH = Text.LineHeight;
+            var x = inRect.x;
+            var y = inRect.y;
+            var LH = Text.LineHeight;
             y += LH;
 
             Text.Font = GameFont.Medium;
@@ -104,19 +108,22 @@ namespace Ad2mod
             y += Text.LineHeight + 2;
             Text.Font = GameFont.Small;
             if (defaultThresholdField.DoField(y, "Default target time", ref settings.defaultThreshold))
+            {
                 Messages.Message("Default target time changed to " + settings.defaultThreshold, MessageTypeDefOf.NeutralEvent);
+            }
+
             TooltipHandler.TipRegion(new Rect(x, y, 360, LH), "Has no effect if 'Put recipes in context menu' is checked");
 
             y += LH;
-            Rect r1 = new Rect(x, y, 360, LH);
+            var r1 = new Rect(x, y, 360, LH);
             Widgets.CheckboxLabeled(r1, "Limit to x5 recipes", ref settings.limitToX5);
             TooltipHandler.TipRegion(r1, "Add only x5 recipes");
             y += LH;
-            Rect r2 = new Rect(x, y, 360, LH);
+            var r2 = new Rect(x, y, 360, LH);
             Widgets.CheckboxLabeled(r2, "Put recipes in context menu", ref settings.useRightClickMenu);
             TooltipHandler.TipRegion(r2, "Put recipes to context menu of source recipe instead of adding after it in the same list.");
 
-            y += 2*LH+2;
+            y += (2 * LH) + 2;
 
             if (Current.Game == null)
             {
@@ -129,12 +136,15 @@ namespace Ad2mod
             Text.Font = GameFont.Small;
 
             List<Bill> bills = Ad2.FindRecipesUses();
-            string s = $"Remove modded recipes from save ({bills.Count} found)";
+            var s = $"Remove modded recipes from save ({bills.Count} found)";
             var w = Text.CalcSize(s).x + 64;
-            if (Widgets.ButtonText( new Rect(x, y, w, 32), s))
+            if (Widgets.ButtonText(new Rect(x, y, w, 32), s))
             {
                 foreach (Bill bill in bills)
+                {
                     bill.billStack.Delete(bill);
+                }
+
                 Messages.Message(bills.Count.ToString() + " bills removed", MessageTypeDefOf.NeutralEvent);
             }
         }
@@ -148,11 +158,11 @@ namespace Ad2mod
         static readonly int[] mulFactors = { 5, 10, 25, 50 };
 
         //  old:new
-        static Dictionary<RecipeDef, List<RecipeDef>> dictON = new Dictionary<RecipeDef, List<RecipeDef>>();
+        static readonly Dictionary<RecipeDef, List<RecipeDef>> dictON = new Dictionary<RecipeDef, List<RecipeDef>>();
         //  new:old
-        static Dictionary<RecipeDef, RecipeDef> dictNO = new Dictionary<RecipeDef, RecipeDef>();
+        static readonly Dictionary<RecipeDef, RecipeDef> dictNO = new Dictionary<RecipeDef, RecipeDef>();
         //  recipe.LabelCap : RecipeDef
-        static Dictionary<string, RecipeDef> dictLR = new Dictionary<string, RecipeDef>();
+        static readonly Dictionary<string, RecipeDef> dictLR = new Dictionary<string, RecipeDef>();
 
         static string TransformRecipeLabel(string s)
         {
@@ -165,9 +175,11 @@ namespace Ad2mod
 
         static void RememberRecipeLabel(RecipeDef r)
         {
-            string label = TransformRecipeLabel(r.LabelCap);
+            var label = TransformRecipeLabel(r.LabelCap);
             if (!dictLR.ContainsKey(label))
+            {
                 dictLR.Add(label, r);
+            }
             else if (dictLR[label] != r)
             {
                 Log.Warning($"Ambiguous recipe label: {label}. Right click menu will be disabled for this one.");
@@ -177,7 +189,10 @@ namespace Ad2mod
         static void RememberNewRecipe(RecipeDef src, RecipeDef n)
         {
             if (!dictON.ContainsKey(src))
+            {
                 dictON.Add(src, new List<RecipeDef>());
+            }
+
             dictON[src].Add(n);
 
             if (dictNO.ContainsKey(n))
@@ -191,32 +206,39 @@ namespace Ad2mod
             RememberRecipeLabel(n);
         }
 
-        public static bool IsSrcRecipe(RecipeDef recipe) => dictON.ContainsKey(recipe);
-        public static bool IsNewRecipe(RecipeDef recipe) => dictNO.ContainsKey(recipe);
+        public static bool IsSrcRecipe(RecipeDef recipe)
+        {
+            return dictON.ContainsKey(recipe);
+        }
+
+        public static bool IsNewRecipe(RecipeDef recipe)
+        {
+            return dictNO.ContainsKey(recipe);
+        }
 
         public static RecipeDef GetSrcRecipe(RecipeDef recipe)
         {
-            RecipeDef res;
-            dictNO.TryGetValue(recipe, out res);
+            dictNO.TryGetValue(recipe, out RecipeDef res);
             return res;
         }
         public static List<RecipeDef> GetNewRecipesList(RecipeDef recipe)
         {
-            List<RecipeDef> res;
-            dictON.TryGetValue(recipe, out res);
+            dictON.TryGetValue(recipe, out List<RecipeDef> res);
             return res;
         }
         public static RecipeDef GetRecipeByLabel(string label)
         {
-            RecipeDef res;
-            dictLR.TryGetValue(label, out res);
+            dictLR.TryGetValue(label, out RecipeDef res);
             return res;
         }
 
         public static List<Bill> FindRecipesUses()
         {
             if (Find.Maps == null)
+            {
                 throw new Exception("Find.Maps == null");
+            }
+
             var res = new List<Bill>();
             foreach (Map map in Find.Maps)
             {
@@ -225,14 +247,16 @@ namespace Ad2mod
                     foreach (Bill bill in wt.BillStack)
                     {
                         if (IsNewRecipe(bill.recipe))
+                        {
                             res.Add(bill);
+                        }
                     }
                 }
             }
             return res;
         }
 
-        static void RecipeIconsCompatibility(HarmonyInstance harmony)
+        static void RecipeIconsCompatibility(Harmony harmony)
         {
             try
             {
@@ -251,12 +275,12 @@ namespace Ad2mod
                     }
                 }))();
             }
-            catch (TypeLoadException ex) { }
+            catch (TypeLoadException) { }
         }
 
         static Ad2()
         {
-            var harmony = HarmonyInstance.Create("com.local.anon.ad2");
+            var harmony = new Harmony("com.local.anon.ad2");
             if (harmony == null)
             {
                 Log.Error("BulkRecipeGenerator: harmony == null, mod will not work");
@@ -270,9 +294,11 @@ namespace Ad2mod
         static RecipeDef MkNewRecipe(RecipeDef rd, int factor)
         {
             if (rd.ingredients.Count == 0 || rd.products.Count != 1)
+            {
                 return null;
+            }
 
-            RecipeDef r = new RecipeDef
+            var r = new RecipeDef
             {
                 defName = rd.defName + $"_{factor}x",
                 label = rd.label + $" x{factor}",
@@ -294,9 +320,9 @@ namespace Ad2mod
                 defaultIngredientFilter = rd.defaultIngredientFilter,
                 researchPrerequisite = rd.researchPrerequisite,
                 factionPrerequisiteTags = rd.factionPrerequisiteTags
-        };
+            };
             r.products.Add(new ThingDefCountClass(rd.products[0].thingDef, rd.products[0].count * factor));
-            List<IngredientCount> new_ingredients = new List<IngredientCount>();
+            var new_ingredients = new List<IngredientCount>();
             foreach (var oic in rd.ingredients)
             {
                 var nic = new IngredientCount();
@@ -322,20 +348,35 @@ namespace Ad2mod
             var srcs = new List<RecipeDef>();
             foreach (var recipe in allRecipes)
             {
-                if (recipe.products.Count != 1) continue;
-                if (recipe.ingredients.Count == 0) continue;
-                if (recipe.WorkAmountTotal(null) > thresholdLimit * 60) continue;
+                if (recipe.products.Count != 1)
+                {
+                    continue;
+                }
+
+                if (recipe.ingredients.Count == 0)
+                {
+                    continue;
+                }
+
+                if (recipe.WorkAmountTotal(null) > thresholdLimit * 60)
+                {
+                    continue;
+                }
+
                 srcs.Add(recipe);
                 //Log.Message(recipe.label + "\t" + recipe.defName + "\t" + recipe.WorkAmountTotal(null)/60);
             }
-            List<ThingDef> RecipesUsers = new List<ThingDef>();
+            var RecipesUsers = new List<ThingDef>();
             foreach (var recipe in srcs)
             {
-                bool lastOne = false;
-                foreach (int factor in mulFactors)
+                var lastOne = false;
+                foreach (var factor in mulFactors)
                 {
                     if (factor * recipe.WorkAmountTotal(null) > thresholdLimit * 60)
+                    {
                         lastOne = true;
+                    }
+
                     var newRecipe = MkNewRecipe(recipe, factor);
                     if (newRecipe == null)
                     {
@@ -350,15 +391,25 @@ namespace Ad2mod
                     foreach (var ru in recipe.AllRecipeUsers)
                     {
                         if (!RecipesUsers.Contains(ru))
+                        {
                             RecipesUsers.Add(ru);
+                        }
+
                         if (newRecipe.recipeUsers == null)
+                        {
                             ru.recipes.Add(newRecipe);
+                        }
                     }
-                    if (lastOne) break;
+                    if (lastOne)
+                    {
+                        break;
+                    }
                 }
             }
             foreach (var ru in RecipesUsers)
+            {
                 Traverse.Create(ru).Field("allRecipesCached").SetValue(null);
+            }
         }
     }
 
