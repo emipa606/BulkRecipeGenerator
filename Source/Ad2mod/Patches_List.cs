@@ -1,11 +1,9 @@
-﻿using HarmonyLib;
-using System;
-using System.Reflection;
-using RimWorld;
-using Verse;
-using UnityEngine;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using HarmonyLib;
+using RimWorld;
+using UnityEngine;
+using Verse;
 
 namespace Ad2mod
 {
@@ -18,7 +16,8 @@ namespace Ad2mod
             __state = ___allRecipesCached == null;
         }
 
-        public static List<RecipeDef> Postfix(List<RecipeDef> __result, ref List<RecipeDef> ___allRecipesCached, bool __state)
+        public static List<RecipeDef> Postfix(List<RecipeDef> __result, ref List<RecipeDef> ___allRecipesCached,
+            bool __state)
         {
             if (!__state)
             {
@@ -28,17 +27,21 @@ namespace Ad2mod
             var res = new List<RecipeDef>();
             foreach (var r in __result)
             {
-                if (!Ad2.IsNewRecipe(r))
+                if (Ad2.IsNewRecipe(r))
                 {
-                    res.Add(r);
-                    var newRList = Ad2.GetNewRecipesList(r);
-                    if (newRList != null)
-                    {
-                        foreach (var nr in newRList)
-                        {
-                            res.Add(nr);
-                        }
-                    }
+                    continue;
+                }
+
+                res.Add(r);
+                var newRList = Ad2.GetNewRecipesList(r);
+                if (newRList == null)
+                {
+                    continue;
+                }
+
+                foreach (var nr in newRList)
+                {
+                    res.Add(nr);
                 }
             }
 
@@ -66,7 +69,7 @@ namespace Ad2mod
                 return false;
             }
 
-            RecipeDef srcRecipe = Ad2.GetSrcRecipe(__instance);
+            var srcRecipe = Ad2.GetSrcRecipe(__instance);
             if (srcRecipe == null)
             {
                 return true;
@@ -82,6 +85,7 @@ namespace Ad2mod
                 //Log.Message(__instance.label + " hidden with src workAmount " + __instance.WorkAmountTotal(null)/60);
                 return false;
             }
+
             return true;
         }
     }
@@ -91,8 +95,9 @@ namespace Ad2mod
     [HarmonyPatch("DoListing")]
     public class BillStack_DoListing_Patch
     {
-        public static bool inDoListing = false;
+        public static bool inDoListing;
         public static BillStack lastBillStack;
+
         public static void Prefix(ref Func<List<FloatMenuOption>> recipeOptionsMaker, BillStack __instance)
         {
             inDoListing = true;
@@ -102,8 +107,8 @@ namespace Ad2mod
                 return;
             }
 
-            List<FloatMenuOption> list = recipeOptionsMaker();
-            recipeOptionsMaker = delegate ()
+            var list = recipeOptionsMaker();
+            recipeOptionsMaker = delegate
             {
                 var newList = new List<FloatMenuOption>();
                 foreach (var opt in list)
@@ -114,24 +119,24 @@ namespace Ad2mod
                         newList.Add(opt);
                     }
                 }
+
                 return newList;
             };
         }
-        
+
         public static void Postfix()
         {
             inDoListing = false;
         }
-
     }
 
 
     [HarmonyPatch(typeof(FloatMenu), MethodType.Constructor)]
-    [HarmonyPatch(new Type[] { typeof(List<FloatMenuOption>) })]
-    class PatchFloatMenu
+    [HarmonyPatch(new[] {typeof(List<FloatMenuOption>)})]
+    internal class PatchFloatMenu
     {
-        public static List<FloatMenu> trackedFM = new List<FloatMenu>();
-        public static List<FloatMenuOption> trackedFMO = new List<FloatMenuOption>();
+        private static readonly List<FloatMenu> trackedFM = new List<FloatMenu>();
+        private static readonly List<FloatMenuOption> trackedFMO = new List<FloatMenuOption>();
 
         public static bool IsTracked(FloatMenuOption fmo)
         {
@@ -143,32 +148,34 @@ namespace Ad2mod
             return trackedFM.Contains(fm);
         }
 
-        public static bool Untrack(FloatMenuOption fmo)
+        public static void Untrack(FloatMenuOption fmo)
         {
-            return trackedFMO.Remove(fmo);
+            trackedFMO.Remove(fmo);
         }
 
-        public static bool Untrack(FloatMenu fm)
+        public static void Untrack(FloatMenu fm)
         {
-            return trackedFM.Remove(fm);
+            trackedFM.Remove(fm);
         }
 
-        static void Postfix(FloatMenu __instance, List<FloatMenuOption> ___options)
+        private static void Postfix(FloatMenu __instance, List<FloatMenuOption> ___options)
         {
-            if (BillStack_DoListing_Patch.inDoListing)
+            if (!BillStack_DoListing_Patch.inDoListing)
             {
-                trackedFM.Add(__instance);
-                foreach (FloatMenuOption opt in ___options)
-                {
-                    trackedFMO.Add(opt);
-                }
+                return;
+            }
+
+            trackedFM.Add(__instance);
+            foreach (var opt in ___options)
+            {
+                trackedFMO.Add(opt);
             }
         }
     }
 
 
     [HarmonyPatch(typeof(WindowStack))]
-    [HarmonyPatch("TryRemove", new Type[] { typeof(Window), typeof(bool)} )]
+    [HarmonyPatch("TryRemove", typeof(Window), typeof(bool))]
     public class WindowStack_TryRemove_Patch
     {
         public static void Postfix(bool __result, Window window)
@@ -183,12 +190,13 @@ namespace Ad2mod
                 return;
             }
 
-            var fmos = (List<FloatMenuOption>)Traverse.Create(fm).Field("options").GetValue();
+            var fmos = (List<FloatMenuOption>) Traverse.Create(fm).Field("options").GetValue();
             PatchFloatMenu.Untrack(fm);
-            foreach (FloatMenuOption opt in fmos)
+            foreach (var opt in fmos)
             {
                 PatchFloatMenu.Untrack(opt);
             }
+
             //Log.Message($"WindowStack.TryRemove {PatchFloatMenu.trackedFM.Count}  {PatchFloatMenu.trackedFMO.Count}");
         }
     }
@@ -198,14 +206,15 @@ namespace Ad2mod
     [HarmonyPatch("DoGUI")]
     public class FloatMenuOption_DoGUI_Patch
     {
-        static List<FloatMenuOption> RecipeOptionsMaker(List<RecipeDef> recipesList)
+        private static List<FloatMenuOption> RecipeOptionsMaker(List<RecipeDef> recipesList)
         {
             var list = new List<FloatMenuOption>();
             if (!(BillStack_DoListing_Patch.lastBillStack.billGiver is Building_WorkTable table))
             {
-                list.Add(new FloatMenuOption("table == null", delegate () { }));
+                list.Add(new FloatMenuOption("table == null", delegate { }));
                 return list;
             }
+
             foreach (var recipe in recipesList)
             {
                 if (!recipe.AvailableNow)
@@ -213,16 +222,18 @@ namespace Ad2mod
                     continue;
                 }
 
-                list.Add(new FloatMenuOption(recipe.LabelCap, delegate ()
+                list.Add(new FloatMenuOption(recipe.LabelCap, delegate
                 {
-                    if (!table.Map.mapPawns.FreeColonists.Any((Pawn col) => recipe.PawnSatisfiesSkillRequirements(col)))
+                    if (!table.Map.mapPawns.FreeColonists.Any(col => recipe.PawnSatisfiesSkillRequirements(col)))
                     {
                         Bill.CreateNoPawnsWithSkillDialog(recipe);
                     }
-                    Bill bill2 = recipe.MakeNewBill();
+
+                    var bill2 = recipe.MakeNewBill();
                     table.billStack.AddBill(bill2);
                 }));
             }
+
             return list;
         }
 
@@ -233,27 +244,29 @@ namespace Ad2mod
                 return;
             }
 
-            if (__result == true && Event.current.button == 1)
+            if (!__result || Event.current.button != 1)
             {
-                __result = false;
-                var recipe = Ad2.GetRecipeByLabel(__instance.Label);
-                if (recipe==null || !Ad2.IsSrcRecipe(recipe))
-                {
-                    return;
-                }
-
-                List<RecipeDef> nlst = Ad2.GetNewRecipesList(recipe);
-                if (nlst == null)
-                {
-                    return;
-                }
-
-                Find.WindowStack.Add(new FloatMenu(RecipeOptionsMaker(nlst)));
+                return;
             }
+
+            __result = false;
+            var recipe = Ad2.GetRecipeByLabel(__instance.Label);
+            if (recipe == null || !Ad2.IsSrcRecipe(recipe))
+            {
+                return;
+            }
+
+            var nlst = Ad2.GetNewRecipesList(recipe);
+            if (nlst == null)
+            {
+                return;
+            }
+
+            Find.WindowStack.Add(new FloatMenu(RecipeOptionsMaker(nlst)));
         }
     }
 
-    
+
     [HarmonyPatch(typeof(FloatMenuOption))]
     [HarmonyPatch("Chosen")]
     public class FloatMenuOption_Chosen_Patch
@@ -268,5 +281,4 @@ namespace Ad2mod
             return true;
         }
     }
-
 }
