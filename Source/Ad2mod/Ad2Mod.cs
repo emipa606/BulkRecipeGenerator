@@ -40,19 +40,27 @@ namespace Ad2mod
                 "Has no effect if 'Put recipes in context menu' is checked");
 
             y += LH;
-            var r1 = new Rect(x, y, 360, LH);
-            Widgets.CheckboxLabeled(r1, "Limit to x5 recipes", ref settings.limitToX5);
-            TooltipHandler.TipRegion(r1, "Add only x5 recipes");
+            var rect = new Rect(x, y, 360, LH);
+            Widgets.CheckboxLabeled(rect, "Limit to x5 recipes", ref settings.limitToX5);
+            TooltipHandler.TipRegion(rect, "Add only x5 recipes");
             y += LH;
-            var r2 = new Rect(x, y, 360, LH);
-            Widgets.CheckboxLabeled(r2, "Put recipes in context menu", ref settings.useRightClickMenu);
-            TooltipHandler.TipRegion(r2,
+            rect = new Rect(x, y, 360, LH);
+            Widgets.CheckboxLabeled(rect, "Put recipes in context menu", ref settings.useRightClickMenu);
+            TooltipHandler.TipRegion(rect,
                 "Put recipes to context menu of source recipe instead of adding after it in the same list.");
             y += LH;
-            var r3 = new Rect(x, y, 360, LH);
-            Widgets.CheckboxLabeled(r3, "Same quality for all items", ref settings.useSameQualityForAll);
-            TooltipHandler.TipRegion(r3,
-                "Recipes that make items that have quality will use the same quality for all created items. Inspiration will apply to all items created.");
+            rect = new Rect(x, y, 360, LH);
+            Widgets.CheckboxLabeled(rect, "Generate bulk recipes for quality items", ref settings.makeBulkForQuality);
+            TooltipHandler.TipRegion(rect,
+                "Will create recipes for items that have quality. How these are handled can be further defined below.");
+            if (settings.makeBulkForQuality)
+            {
+                y += LH;
+                rect = new Rect(x, y, 360, LH);
+                Widgets.CheckboxLabeled(rect, "Same quality for all items", ref settings.useSameQualityForAll);
+                TooltipHandler.TipRegion(rect,
+                    "Recipes that make items that have quality will use the same quality for all created items. Inspiration will apply to all items created.");
+            }
 
             y += (2 * LH) + 2;
 

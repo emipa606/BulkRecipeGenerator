@@ -1,5 +1,8 @@
 # Changelog for BulkRecipeGenerator
 
+1.0.7.0 - Added another setting to skip making bulk recipes for quality items
+
+
 1.0.6.0 - Added a setting for how quality-items are handled. Also stopped the custom recipe-view code from running when showing the health-tab.
 
 

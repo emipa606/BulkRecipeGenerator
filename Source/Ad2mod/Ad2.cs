@@ -237,6 +237,11 @@ namespace Ad2mod
                     continue;
                 }
 
+                if (!Ad2Mod.settings.makeBulkForQuality && recipe.products[0].thingDef.HasComp(typeof(CompQuality)))
+                {
+                    continue;
+                }
+
                 if (recipe.WorkAmountTotal(null) > thresholdLimit * 60)
                 {
                     continue;
