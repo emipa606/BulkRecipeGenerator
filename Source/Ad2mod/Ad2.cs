@@ -11,7 +11,7 @@ namespace Ad2mod
     public class Ad2
     {
         private const int thresholdLimit = 120;
-        private static readonly int[] mulFactors = {5, 10, 25, 50};
+        private static readonly int[] mulFactors = { 5, 10, 25, 50 };
 
         //  old:new
         private static readonly Dictionary<RecipeDef, List<RecipeDef>> dictON =
@@ -134,7 +134,7 @@ namespace Ad2mod
         {
             try
             {
-                ((Action) (() =>
+                ((Action)(() =>
                 {
                     if (!LoadedModManager.RunningModsListForReading.Any(x => x.Name == "Recipe icons"))
                     {
@@ -202,7 +202,7 @@ namespace Ad2mod
             r.ingredients = new_ingredients;
             r.workAmount = rd.WorkAmountTotal(null) * factor;
 
-            var IVGClass = (Type) Traverse.Create(rd).Field("ingredientValueGetterClass").GetValue();
+            var IVGClass = (Type)Traverse.Create(rd).Field("ingredientValueGetterClass").GetValue();
             Traverse.Create(r).Field("ingredientValueGetterClass").SetValue(IVGClass);
 
             //if (rd.unfinishedThingDef != null)
@@ -275,6 +275,11 @@ namespace Ad2mod
                     }
 
                     if (lastOne)
+                    {
+                        break;
+                    }
+
+                    if (Ad2Mod.settings.limitToX5)
                     {
                         break;
                     }

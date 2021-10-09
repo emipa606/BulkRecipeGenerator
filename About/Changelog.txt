@@ -1,5 +1,8 @@
 # Changelog for BulkRecipeGenerator
 
+1.0.4.0 - The Limit to x5 recipes-option should now work on all recipes, but will need a restart when changed to have effect
+
+
 1.0.3.0 - Mod updated for 1.3 and passed autotests
 
 
