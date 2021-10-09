@@ -27,7 +27,7 @@ namespace Ad2mod
             y += LH;
 
             Text.Font = GameFont.Medium;
-            Widgets.Label(new Rect(x, y, 200, Text.LineHeight), "Global settings");
+            Widgets.Label(new Rect(x, y, 200, Text.LineHeight), "Global settings (requires restart)");
             y += Text.LineHeight + 2;
             Text.Font = GameFont.Small;
             if (defaultThresholdField.DoField(y, "Default target time", ref settings.defaultThreshold))
@@ -48,6 +48,11 @@ namespace Ad2mod
             Widgets.CheckboxLabeled(r2, "Put recipes in context menu", ref settings.useRightClickMenu);
             TooltipHandler.TipRegion(r2,
                 "Put recipes to context menu of source recipe instead of adding after it in the same list.");
+            y += LH;
+            var r3 = new Rect(x, y, 360, LH);
+            Widgets.CheckboxLabeled(r3, "Same quality for all items", ref settings.useSameQualityForAll);
+            TooltipHandler.TipRegion(r3,
+                "Recipes that make items that have quality will use the same quality for all created items. Inspiration will apply to all items created.");
 
             y += (2 * LH) + 2;
 

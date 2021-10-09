@@ -9,6 +9,11 @@ namespace Ad2mod
     {
         public static bool Postfix(bool __result, RecipeDef __instance)
         {
+            if (__instance.IsSurgery)
+            {
+                return __result;
+            }
+
             if (Ad2Mod.settings.useRightClickMenu)
             {
                 return __result;

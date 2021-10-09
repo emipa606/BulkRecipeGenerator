@@ -15,6 +15,11 @@ namespace Ad2mod
 
         public static void Prefix(ref Func<List<FloatMenuOption>> recipeOptionsMaker, BillStack __instance)
         {
+            if (__instance.billGiver is Pawn)
+            {
+                return;
+            }
+
             inDoListing = true;
             lastBillStack = __instance;
             if (!Ad2Mod.settings.useRightClickMenu)

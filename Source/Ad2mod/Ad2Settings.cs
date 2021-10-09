@@ -7,12 +7,14 @@ namespace Ad2mod
         public int defaultThreshold = 60;
         public bool limitToX5;
         public bool useRightClickMenu = true;
+        public bool useSameQualityForAll;
 
         public override void ExposeData()
         {
             Scribe_Values.Look(ref defaultThreshold, "defaultThreshold", 60);
             Scribe_Values.Look(ref limitToX5, "limitToX5");
             Scribe_Values.Look(ref useRightClickMenu, "useRightClickMenu", true);
+            Scribe_Values.Look(ref useSameQualityForAll, "useSameQualityForAll");
             base.ExposeData();
         }
     }

@@ -189,7 +189,7 @@ namespace Ad2mod
                 researchPrerequisite = rd.researchPrerequisite,
                 factionPrerequisiteTags = rd.factionPrerequisiteTags
             };
-            if (rd.products[0].thingDef.HasComp(typeof(CompQuality)))
+            if (!Ad2Mod.settings.useSameQualityForAll && rd.products[0].thingDef.HasComp(typeof(CompQuality)))
             {
                 for (var index = 0; index < factor; index++)
                 {
