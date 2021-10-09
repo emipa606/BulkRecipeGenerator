@@ -1,5 +1,8 @@
 # Changelog for BulkRecipeGenerator
 
+1.0.5.0 - Products with quality should now no longer all have the same quality but be generated individually. Also a inspiration will only affect one quality-item instead of all of them
+
+
 1.0.4.0 - The Limit to x5 recipes-option should now work on all recipes, but will need a restart when changed to have effect
 
 

@@ -189,7 +189,18 @@ namespace Ad2mod
                 researchPrerequisite = rd.researchPrerequisite,
                 factionPrerequisiteTags = rd.factionPrerequisiteTags
             };
-            r.products.Add(new ThingDefCountClass(rd.products[0].thingDef, rd.products[0].count * factor));
+            if (rd.products[0].thingDef.HasComp(typeof(CompQuality)))
+            {
+                for (var index = 0; index < factor; index++)
+                {
+                    r.products.Add(new ThingDefCountClass(rd.products[0].thingDef, rd.products[0].count));
+                }
+            }
+            else
+            {
+                r.products.Add(new ThingDefCountClass(rd.products[0].thingDef, rd.products[0].count * factor));
+            }
+
             var new_ingredients = new List<IngredientCount>();
             foreach (var oic in rd.ingredients)
             {
