@@ -5,6 +5,9 @@
 Update of Lowlofirs mod
 https://ludeon.com/forums/index.php?topic=48838.0
 
+- Added setting for skipping making bulk recipes for products that has quality
+- Added setting to change how products that has quality are created, individually or in bulk with the same quality
+
 ![Image](https://i.imgur.com/pufA0kM.png)
 
 	

@@ -1,5 +1,8 @@
 # Changelog for BulkRecipeGenerator
 
+1.0.8.0 - Fixed load order in connection to RIMMSQOL, thanks Chrispy
+
+
 1.0.7.0 - Added another setting to skip making bulk recipes for quality items
 
 
