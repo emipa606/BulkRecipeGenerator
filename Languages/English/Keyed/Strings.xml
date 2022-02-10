@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <BRG.logging>Verbose logging</BRG.logging>
+  <BRG.logginginfo>Will show more log messages, good for debugging</BRG.logginginfo>
+  <BRG.modversion>Installed mod-version: {0}</BRG.modversion>
+  <BRG.global>Global settings (requires restart)</BRG.global>
+  <BRG.apply>Apply</BRG.apply>
+  <BRG.defaulttime>Default target time</BRG.defaulttime>
+  <BRG.defaulttimechange>Default target time changed to {0}</BRG.defaulttimechange>
+  <BRG.noeffect>Has no effect if 'Put recipes in context menu' is checked</BRG.noeffect>
+  <BRG.limitfive>Limit to x5 recipes</BRG.limitfive>
+  <BRG.limitfiveinfo>Add only x5 recipes</BRG.limitfiveinfo>
+  <BRG.contextmenu>Put recipes in context menu</BRG.contextmenu>
+  <BRG.contextmenuinfo>Put recipes to context menu of source recipe instead of adding after it in the same list.</BRG.contextmenuinfo>
+  <BRG.qualityitems>Generate bulk recipes for quality items</BRG.qualityitems>
+  <BRG.qualityitemsinfo>Will create recipes for items that have quality. How these are handled can be further defined below.</BRG.qualityitemsinfo>
+  <BRG.sameforall>Same quality for all items</BRG.sameforall>
+  <BRG.sameforallinfo>Recipes that make items that have quality will use the same quality for all created items. Inspiration will apply to all items created.</BRG.sameforallinfo>
+  <BRG.world>World settings</BRG.world>
+  <BRG.removerecipes>Remove modded recipes from save ({0} found)</BRG.removerecipes>
+  <BRG.billsremoved>{0} bills removed</BRG.billsremoved>
+</LanguageData>

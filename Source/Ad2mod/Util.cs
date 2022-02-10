@@ -1,10 +1,9 @@
-﻿namespace Ad2mod
+﻿namespace Ad2mod;
+
+internal class Util
 {
-    internal class Util
+    public static int Clamp(int val, int a, int b)
     {
-        public static int Clamp(int val, int a, int b)
-        {
-            return val < a ? a : val > b ? b : val;
-        }
+        return val < a ? a : val > b ? b : val;
     }
 }
