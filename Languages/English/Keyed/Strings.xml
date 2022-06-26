@@ -7,6 +7,8 @@
   <BRG.apply>Apply</BRG.apply>
   <BRG.defaulttime>Default target time</BRG.defaulttime>
   <BRG.defaulttimechange>Default target time changed to {0}</BRG.defaulttimechange>
+  <BRG.maxtimecutoff>Max worktime for bulk</BRG.maxtimecutoff>
+  <BRG.maxtimecutoffchange>Max worktime for generating bulk recipes set to {0}. NOTICE: This requires a restart of the game to have effect</BRG.maxtimecutoffchange>
   <BRG.noeffect>Has no effect if 'Put recipes in context menu' is checked</BRG.noeffect>
   <BRG.limitfive>Limit to x5 recipes</BRG.limitfive>
   <BRG.limitfiveinfo>Add only x5 recipes</BRG.limitfiveinfo>

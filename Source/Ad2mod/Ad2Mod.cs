@@ -9,7 +9,9 @@ internal class Ad2Mod : Mod
 {
     public static Ad2Settings settings;
     private static string currentVersion;
-    private readonly NumField defaultThresholdField = new NumField();
+
+    private readonly NumField defaultMaxTimeField = new NumField(0, int.MaxValue);
+    //private readonly NumField defaultThresholdField = new NumField();
 
     public Ad2Mod(ModContentPack content) : base(content)
     {
@@ -39,14 +41,21 @@ internal class Ad2Mod : Mod
         Widgets.Label(new Rect(x, y, 200, Text.LineHeight), "BRG.global".Translate());
         y += Text.LineHeight + 2;
         Text.Font = GameFont.Small;
-        if (defaultThresholdField.DoField(y, "BRG.defaulttime".Translate(), ref settings.defaultThreshold))
+        //if (defaultThresholdField.DoField(y, "BRG.defaulttime".Translate(), ref settings.defaultThreshold))
+        //{
+        //    Messages.Message("BRG.defaulttimechange".Translate(settings.defaultThreshold),
+        //        MessageTypeDefOf.NeutralEvent);
+        //}
+
+        y += LH;
+        if (defaultMaxTimeField.DoField(y, "BRG.maxtimecutoff".Translate(), ref settings.maxtimecutoff))
         {
-            Messages.Message("BRG.defaulttimechange".Translate(settings.defaultThreshold),
+            Messages.Message("BRG.maxtimecutoffchange".Translate(settings.maxtimecutoff),
                 MessageTypeDefOf.NeutralEvent);
         }
 
-        TooltipHandler.TipRegion(new Rect(x, y, 360, LH),
-            "BRG.noeffect".Translate());
+        //TooltipHandler.TipRegion(new Rect(x, y, 360, LH),
+        //    "BRG.noeffect".Translate());
 
         y += LH;
         rect = new Rect(x, y, 360, LH);

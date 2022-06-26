@@ -10,7 +10,6 @@ namespace Ad2mod;
 [StaticConstructorOnStartup]
 public class Ad2
 {
-    private const int thresholdLimit = 120;
     private static readonly int[] mulFactors = { 5, 10, 25, 50 };
 
     //  old:new
@@ -23,10 +22,12 @@ public class Ad2
     //  recipe.LabelCap : RecipeDef
     private static readonly Dictionary<string, RecipeDef> dictLR = new Dictionary<string, RecipeDef>();
 
+    public static readonly ThingDef GeneratedUnfinishedBulkItems;
+
     static Ad2()
     {
         var harmony = new Harmony("com.local.anon.ad2");
-
+        GeneratedUnfinishedBulkItems = ThingDef.Named("GeneratedUnfinishedBulkItems");
         harmony.PatchAll(Assembly.GetExecutingAssembly());
         //RecipeIconsCompatibility(harmony);
         GenRecipes();
@@ -198,7 +199,7 @@ public class Ad2
             workSkillLearnFactor = rd.workSkillLearnFactor,
             skillRequirements = rd.skillRequirements.ListFullCopyOrNull(),
             recipeUsers = rd.recipeUsers.ListFullCopyOrNull(),
-            unfinishedThingDef = null, //rd.unfinishedThingDef,
+            unfinishedThingDef = GeneratedUnfinishedBulkItems, //rd.unfinishedThingDef,
             effectWorking = rd.effectWorking,
             soundWorking = rd.soundWorking,
             allowMixingIngredients = rd.allowMixingIngredients,
@@ -259,7 +260,7 @@ public class Ad2
                 continue;
             }
 
-            if (recipe.WorkAmountTotal(null) > thresholdLimit * 60)
+            if (recipe.WorkAmountTotal(null) > Ad2Mod.settings.maxtimecutoff * 60)
             {
                 continue;
             }
@@ -274,7 +275,7 @@ public class Ad2
             var lastOne = false;
             foreach (var factor in mulFactors)
             {
-                if (factor * recipe.WorkAmountTotal(null) > thresholdLimit * 60)
+                if (factor * recipe.WorkAmountTotal(null) > Ad2Mod.settings.maxtimecutoff * 60)
                 {
                     lastOne = true;
                 }
