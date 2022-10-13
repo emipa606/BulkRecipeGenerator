@@ -10,7 +10,7 @@ public class WindowStack_TryRemove_Patch
 {
     public static void Postfix(bool __result, Window window)
     {
-        if (!(window is FloatMenu fm) || __result == false)
+        if (window is not FloatMenu fm || __result == false)
         {
             return;
         }

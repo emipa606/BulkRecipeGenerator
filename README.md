@@ -7,6 +7,7 @@ https://ludeon.com/forums/index.php?topic=48838.0
 
 - Added setting for skipping making bulk recipes for products that has quality
 - Added setting to change how products that has quality are created, individually or in bulk with the same quality
+- Added setting to define how much work a recipe could have and still get a bulk variant instead of the hardcoded 120
 
 ![Image](https://i.imgur.com/pufA0kM.png)
 

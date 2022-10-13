@@ -13,7 +13,7 @@ public class FloatMenuOption_DoGUI_Patch
     private static List<FloatMenuOption> RecipeOptionsMaker(List<RecipeDef> recipesList)
     {
         var list = new List<FloatMenuOption>();
-        if (!(BillStack_DoListing_Patch.lastBillStack.billGiver is Building_WorkTable table))
+        if (BillStack_DoListing_Patch.lastBillStack.billGiver is not Building_WorkTable table)
         {
             list.Add(new FloatMenuOption("table == null", delegate { }));
             return list;

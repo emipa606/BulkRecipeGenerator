@@ -30,17 +30,11 @@ public class RecipeDef_AvailableNow_Getter_Patch
             return true;
         }
 
-        if (Ad2Mod.settings.limitToX5 && __instance != Ad2.GetNewRecipesList(srcRecipe)[0])
-        {
-            return false;
-        }
-
+        return !Ad2Mod.settings.limitToX5 || __instance == Ad2.GetNewRecipesList(srcRecipe)[0];
         //if (__instance.workAmount > 1.5 * Ad2Mod.settings.defaultThreshold * 60)
         //{
         //    //Log.Message(__instance.label + " hidden with src workAmount " + __instance.WorkAmountTotal(null)/60);
         //    return false;
         //}
-
-        return true;
     }
 }

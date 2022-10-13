@@ -10,11 +10,6 @@ public class FloatMenuOption_Chosen_Patch
 {
     public static bool Prefix(FloatMenuOption __instance)
     {
-        if (Ad2Mod.settings.useRightClickMenu && Event.current.button == 1 && PatchFloatMenu.IsTracked(__instance))
-        {
-            return false;
-        }
-
-        return true;
+        return !Ad2Mod.settings.useRightClickMenu || Event.current.button != 1 || !PatchFloatMenu.IsTracked(__instance);
     }
 }
