@@ -4,8 +4,7 @@ using Verse;
 
 namespace Ad2mod;
 
-[HarmonyPatch(typeof(FloatMenuOption))]
-[HarmonyPatch("Chosen")]
+[HarmonyPatch(typeof(FloatMenuOption), nameof(FloatMenuOption.Chosen))]
 public class FloatMenuOption_Chosen_Patch
 {
     public static bool Prefix(FloatMenuOption __instance)

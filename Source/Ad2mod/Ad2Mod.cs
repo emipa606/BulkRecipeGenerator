@@ -17,8 +17,7 @@ internal class Ad2Mod : Mod
     {
         settings = GetSettings<Ad2Settings>();
         currentVersion =
-            VersionFromManifest.GetVersionFromModMetaData(
-                ModLister.GetActiveModWithIdentifier("Mlie.BulkRecipeGenerator"));
+            VersionFromManifest.GetVersionFromModMetaData(content.ModMetaData);
     }
 
     public override string SettingsCategory()
@@ -115,16 +114,9 @@ internal class Ad2Mod : Mod
     }
     //Game lastGame;
 
-    private class NumField
+    private class NumField(int min = 0, int max = 120)
     {
-        private readonly int min, max;
         private string buffer;
-
-        public NumField(int min = 0, int max = 120)
-        {
-            this.min = min;
-            this.max = max;
-        }
 
         public bool DoField(float y, string label, ref int val)
         {

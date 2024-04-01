@@ -6,8 +6,7 @@ using Verse;
 
 namespace Ad2mod;
 
-[HarmonyPatch(typeof(FloatMenuOption))]
-[HarmonyPatch("DoGUI")]
+[HarmonyPatch(typeof(FloatMenuOption), nameof(FloatMenuOption.DoGUI))]
 public class FloatMenuOption_DoGUI_Patch
 {
     private static List<FloatMenuOption> RecipeOptionsMaker(List<RecipeDef> recipesList)

@@ -2,13 +2,10 @@
 
 namespace Ad2mod;
 
-internal class Ad2WorldComp : WorldComponent
+internal class Ad2WorldComp(World world) : WorldComponent(world)
 {
     //public int threshold;
 
-    public Ad2WorldComp(World world) : base(world)
-    {
-        //threshold = Ad2Mod.settings.defaultThreshold;
-        //Log.Message("WorldComp.ctr():  " + world.info.name + "  " + world.info.seedString);
-    }
+    //threshold = Ad2Mod.settings.defaultThreshold;
+    //Log.Message("WorldComp.ctr():  " + world.info.name + "  " + world.info.seedString);
 }

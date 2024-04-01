@@ -3,8 +3,7 @@ using Verse;
 
 namespace Ad2mod;
 
-[HarmonyPatch(typeof(RecipeDef))]
-[HarmonyPatch("AvailableNow", MethodType.Getter)]
+[HarmonyPatch(typeof(RecipeDef), nameof(RecipeDef.AvailableNow), MethodType.Getter)]
 public class RecipeDef_AvailableNow_Getter_Patch
 {
     public static bool Postfix(bool __result, RecipeDef __instance)

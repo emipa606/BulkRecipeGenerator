@@ -10,7 +10,7 @@ namespace Ad2mod;
 [StaticConstructorOnStartup]
 public class Ad2
 {
-    private static readonly int[] mulFactors = { 5, 10, 25, 50 };
+    private static readonly int[] mulFactors = [5, 10, 25, 50];
 
     //  old:new
     private static readonly Dictionary<RecipeDef, List<RecipeDef>> dictON =
@@ -62,34 +62,35 @@ public class Ad2
     private static void RememberRecipeLabel(RecipeDef r)
     {
         var label = TransformRecipeLabel(r.LabelCap);
-        if (!dictLR.ContainsKey(label))
+        if (dictLR.TryAdd(label, r))
         {
-            dictLR.Add(label, r);
+            return;
         }
-        else if (dictLR[label] != r)
+
+        if (dictLR[label] == r)
         {
-            LogMessage($"Ambiguous recipe label: {label}. Right click menu will be disabled for this one.", false,
-                true);
-            dictLR[label] = null;
+            return;
         }
+
+        LogMessage($"Ambiguous recipe label: {label}. Right click menu will be disabled for this one.", false,
+            true);
+        dictLR[label] = null;
     }
 
     private static void RememberNewRecipe(RecipeDef src, RecipeDef n)
     {
         if (!dictON.ContainsKey(src))
         {
-            dictON.Add(src, new List<RecipeDef>());
+            dictON.Add(src, []);
         }
 
         dictON[src].Add(n);
 
-        if (dictNO.ContainsKey(n))
+        if (!dictNO.TryAdd(n, src))
         {
             Log.Error($"BulkRecipeGenerator: dictNO already contains {n.defName} ({n.label})");
             return;
         }
-
-        dictNO.Add(n, src);
 
         RememberRecipeLabel(src);
         RememberRecipeLabel(n);
@@ -235,7 +236,7 @@ public class Ad2
         Traverse.Create(r).Field("ingredientValueGetterClass").SetValue(IVGClass);
 
         //if (rd.unfinishedThingDef != null)
-        //    Log.Message(rd.label + " uses unfinishedThingDef " + rd.unfinishedThingDef.label+"  an it is removed");
+        //    Log.Message(rd.label + " uses unfinishedThingDef " + rd.unfinishedThingDef.label+"  an is removed");
         return r;
     }
 

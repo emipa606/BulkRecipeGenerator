@@ -6,8 +6,7 @@ using Verse;
 
 namespace Ad2mod;
 
-[HarmonyPatch(typeof(BillStack))]
-[HarmonyPatch("DoListing")]
+[HarmonyPatch(typeof(BillStack), nameof(BillStack.DoListing))]
 public class BillStack_DoListing_Patch
 {
     public static bool inDoListing;

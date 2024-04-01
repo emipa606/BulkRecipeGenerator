@@ -4,12 +4,11 @@ using Verse;
 
 namespace Ad2mod;
 
-[HarmonyPatch(typeof(FloatMenu), MethodType.Constructor)]
-[HarmonyPatch(new[] { typeof(List<FloatMenuOption>) })]
+[HarmonyPatch(typeof(FloatMenu), MethodType.Constructor, typeof(List<FloatMenuOption>))]
 internal class PatchFloatMenu
 {
-    private static readonly List<FloatMenu> trackedFM = new List<FloatMenu>();
-    private static readonly List<FloatMenuOption> trackedFMO = new List<FloatMenuOption>();
+    private static readonly List<FloatMenu> trackedFM = [];
+    private static readonly List<FloatMenuOption> trackedFMO = [];
 
     public static bool IsTracked(FloatMenuOption fmo)
     {

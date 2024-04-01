@@ -4,8 +4,7 @@ using Verse;
 
 namespace Ad2mod;
 
-[HarmonyPatch(typeof(WindowStack))]
-[HarmonyPatch("TryRemove", typeof(Window), typeof(bool))]
+[HarmonyPatch(typeof(WindowStack), nameof(WindowStack.TryRemove), typeof(Window), typeof(bool))]
 public class WindowStack_TryRemove_Patch
 {
     public static void Postfix(bool __result, Window window)
