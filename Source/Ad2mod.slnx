@@ -1,0 +1,9 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Release" />
+  </Configurations>
+  <Project Path="Ad2mod/Ad2mod.csproj" />
+  <Properties Name="ExtensibilityGlobals" Scope="PostLoad">
+    <Property Name="BuildVersion_StartDate" Value="2000/1/1" />
+  </Properties>
+</Solution>

@@ -5,7 +5,7 @@ using Verse;
 namespace Ad2mod;
 
 [HarmonyPatch(typeof(ThingDef), nameof(ThingDef.AllRecipes), MethodType.Getter)]
-public class ThingDef_AllRecipes_Getter_Patch
+public class ThingDef_AllRecipes
 {
     public static void Prefix(ref bool __state, List<RecipeDef> ___allRecipesCached)
     {
@@ -42,7 +42,6 @@ public class ThingDef_AllRecipes_Getter_Patch
         }
 
         ___allRecipesCached = res;
-        //Log.Message("___allRecipesCached = res");
 
         return res;
     }

@@ -7,15 +7,15 @@ namespace Ad2mod;
 
 internal class Ad2Mod : Mod
 {
-    public static Ad2Settings settings;
+    public static Ad2Settings Settings;
     private static string currentVersion;
 
-    private readonly NumField defaultMaxTimeField = new NumField(0, int.MaxValue);
+    private readonly NumField defaultMaxTimeField = new(0, int.MaxValue);
     //private readonly NumField defaultThresholdField = new NumField();
 
     public Ad2Mod(ModContentPack content) : base(content)
     {
-        settings = GetSettings<Ad2Settings>();
+        Settings = GetSettings<Ad2Settings>();
         currentVersion =
             VersionFromManifest.GetVersionFromModMetaData(content.ModMetaData);
     }
@@ -29,57 +29,49 @@ internal class Ad2Mod : Mod
     {
         var x = inRect.x;
         var y = inRect.y;
-        var LH = Text.LineHeight;
-        y += LH;
-        var rect = new Rect(x, y, 360, LH);
-        Widgets.CheckboxLabeled(rect, "BRG.logging".Translate(), ref settings.verboseLogging);
+        var lh = Text.LineHeight;
+        y += lh;
+        var rect = new Rect(x, y, 360, lh);
+        Widgets.CheckboxLabeled(rect, "BRG.logging".Translate(), ref Settings.VerboseLogging);
         TooltipHandler.TipRegion(rect, "BRG.logginginfo".Translate());
-        y += LH;
+        y += lh;
 
         Text.Font = GameFont.Medium;
         Widgets.Label(new Rect(x, y, 200, Text.LineHeight), "BRG.global".Translate());
         y += Text.LineHeight + 2;
         Text.Font = GameFont.Small;
-        //if (defaultThresholdField.DoField(y, "BRG.defaulttime".Translate(), ref settings.defaultThreshold))
-        //{
-        //    Messages.Message("BRG.defaulttimechange".Translate(settings.defaultThreshold),
-        //        MessageTypeDefOf.NeutralEvent);
-        //}
 
-        y += LH;
-        if (defaultMaxTimeField.DoField(y, "BRG.maxtimecutoff".Translate(), ref settings.maxtimecutoff))
+        y += lh;
+        if (defaultMaxTimeField.DoField(y, "BRG.maxtimecutoff".Translate(), ref Settings.MaxTimeCutoff))
         {
-            Messages.Message("BRG.maxtimecutoffchange".Translate(settings.maxtimecutoff),
+            Messages.Message("BRG.maxtimecutoffchange".Translate(Settings.MaxTimeCutoff),
                 MessageTypeDefOf.NeutralEvent);
         }
 
-        //TooltipHandler.TipRegion(new Rect(x, y, 360, LH),
-        //    "BRG.noeffect".Translate());
-
-        y += LH;
-        rect = new Rect(x, y, 360, LH);
-        Widgets.CheckboxLabeled(rect, "BRG.limitfive".Translate(), ref settings.limitToX5);
+        y += lh;
+        rect = new Rect(x, y, 360, lh);
+        Widgets.CheckboxLabeled(rect, "BRG.limitfive".Translate(), ref Settings.LimitToX5);
         TooltipHandler.TipRegion(rect, "BRG.limitfiveinfo".Translate());
-        y += LH;
-        rect = new Rect(x, y, 360, LH);
-        Widgets.CheckboxLabeled(rect, "BRG.contextmenu".Translate(), ref settings.useRightClickMenu);
+        y += lh;
+        rect = new Rect(x, y, 360, lh);
+        Widgets.CheckboxLabeled(rect, "BRG.contextmenu".Translate(), ref Settings.UseRightClickMenu);
         TooltipHandler.TipRegion(rect,
             "BRG.contextmenuinfo".Translate());
-        y += LH;
-        rect = new Rect(x, y, 360, LH);
-        Widgets.CheckboxLabeled(rect, "BRG.qualityitems".Translate(), ref settings.makeBulkForQuality);
+        y += lh;
+        rect = new Rect(x, y, 360, lh);
+        Widgets.CheckboxLabeled(rect, "BRG.qualityitems".Translate(), ref Settings.MakeBulkForQuality);
         TooltipHandler.TipRegion(rect,
             "BRG.qualityitemsinfo".Translate());
-        if (settings.makeBulkForQuality)
+        if (Settings.MakeBulkForQuality)
         {
-            y += LH;
-            rect = new Rect(x, y, 360, LH);
-            Widgets.CheckboxLabeled(rect, "BRG.sameforall".Translate(), ref settings.useSameQualityForAll);
+            y += lh;
+            rect = new Rect(x, y, 360, lh);
+            Widgets.CheckboxLabeled(rect, "BRG.sameforall".Translate(), ref Settings.UseSameQualityForAll);
             TooltipHandler.TipRegion(rect,
                 "BRG.sameforallinfo".Translate());
         }
 
-        y += (2 * LH) + 2;
+        y += (2 * lh) + 2;
 
         if (Current.Game != null)
         {
@@ -112,7 +104,6 @@ internal class Ad2Mod : Mod
         Widgets.Label(new Rect(x, y, 200, Text.LineHeight), "BRG.modversion".Translate(currentVersion));
         GUI.contentColor = Color.white;
     }
-    //Game lastGame;
 
     private class NumField(int min = 0, int max = 120)
     {
@@ -120,21 +111,18 @@ internal class Ad2Mod : Mod
 
         public bool DoField(float y, string label, ref int val)
         {
-            var LH = Text.LineHeight;
-            if (buffer == null)
-            {
-                buffer = val.ToString();
-            }
+            var lh = Text.LineHeight;
+            buffer ??= val.ToString();
 
             float x = 0;
             var anchor = Text.Anchor;
             Text.Anchor = TextAnchor.MiddleLeft;
-            Widgets.Label(new Rect(x, y, 200, LH), label);
+            Widgets.Label(new Rect(x, y, 200, lh), label);
             Text.Anchor = anchor;
             x += 200;
-            buffer = Widgets.TextField(new Rect(x, y, 60, LH), buffer);
+            buffer = Widgets.TextField(new Rect(x, y, 60, lh), buffer);
             x += 60;
-            if (!Widgets.ButtonText(new Rect(x, y, 100, LH), "BRG.apply".Translate()))
+            if (!Widgets.ButtonText(new Rect(x, y, 100, lh), "BRG.apply".Translate()))
             {
                 return false;
             }

@@ -7,10 +7,10 @@ using Verse;
 namespace Ad2mod;
 
 [HarmonyPatch(typeof(BillStack), nameof(BillStack.DoListing))]
-public class BillStack_DoListing_Patch
+public class BillStack_DoListing
 {
-    public static bool inDoListing;
-    public static BillStack lastBillStack;
+    public static bool InDoListing;
+    public static BillStack LastBillStack;
 
     public static void Prefix(ref Func<List<FloatMenuOption>> recipeOptionsMaker, BillStack __instance)
     {
@@ -19,9 +19,9 @@ public class BillStack_DoListing_Patch
             return;
         }
 
-        inDoListing = true;
-        lastBillStack = __instance;
-        if (!Ad2Mod.settings.useRightClickMenu)
+        InDoListing = true;
+        LastBillStack = __instance;
+        if (!Ad2Mod.Settings.UseRightClickMenu)
         {
             return;
         }
@@ -45,6 +45,6 @@ public class BillStack_DoListing_Patch
 
     public static void Postfix()
     {
-        inDoListing = false;
+        InDoListing = false;
     }
 }

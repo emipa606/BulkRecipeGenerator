@@ -7,12 +7,12 @@ using Verse;
 namespace Ad2mod;
 
 [HarmonyPatch(typeof(FloatMenuOption), nameof(FloatMenuOption.DoGUI))]
-public class FloatMenuOption_DoGUI_Patch
+public class FloatMenuOption_DoGUI
 {
-    private static List<FloatMenuOption> RecipeOptionsMaker(List<RecipeDef> recipesList)
+    private static List<FloatMenuOption> recipeOptionsMaker(List<RecipeDef> recipesList)
     {
         var list = new List<FloatMenuOption>();
-        if (BillStack_DoListing_Patch.lastBillStack.billGiver is not Building_WorkTable table)
+        if (BillStack_DoListing.LastBillStack.billGiver is not Building_WorkTable table)
         {
             list.Add(new FloatMenuOption("table == null", delegate { }));
             return list;
@@ -42,7 +42,7 @@ public class FloatMenuOption_DoGUI_Patch
 
     public static void Postfix(ref bool __result, FloatMenuOption __instance)
     {
-        if (!Ad2Mod.settings.useRightClickMenu || !PatchFloatMenu.IsTracked(__instance))
+        if (!Ad2Mod.Settings.UseRightClickMenu || !FloatMenu_Constructor.IsTracked(__instance))
         {
             return;
         }
@@ -59,12 +59,12 @@ public class FloatMenuOption_DoGUI_Patch
             return;
         }
 
-        var nlst = Ad2.GetNewRecipesList(recipe);
-        if (nlst == null)
+        var newList = Ad2.GetNewRecipesList(recipe);
+        if (newList == null)
         {
             return;
         }
 
-        Find.WindowStack.Add(new FloatMenu(RecipeOptionsMaker(nlst)));
+        Find.WindowStack.Add(new FloatMenu(recipeOptionsMaker(newList)));
     }
 }

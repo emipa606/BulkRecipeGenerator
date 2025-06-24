@@ -13,27 +13,24 @@ public class Ad2
     private static readonly int[] mulFactors = [5, 10, 25, 50];
 
     //  old:new
-    private static readonly Dictionary<RecipeDef, List<RecipeDef>> dictON =
-        new Dictionary<RecipeDef, List<RecipeDef>>();
+    private static readonly Dictionary<RecipeDef, List<RecipeDef>> dictOn = new();
 
     //  new:old
-    private static readonly Dictionary<RecipeDef, RecipeDef> dictNO = new Dictionary<RecipeDef, RecipeDef>();
+    private static readonly Dictionary<RecipeDef, RecipeDef> dictNo = new();
 
     //  recipe.LabelCap : RecipeDef
-    private static readonly Dictionary<string, RecipeDef> dictLR = new Dictionary<string, RecipeDef>();
+    private static readonly Dictionary<string, RecipeDef> dictLr = new();
 
-    public static readonly ThingDef GeneratedUnfinishedBulkItems;
+    private static readonly ThingDef GeneratedUnfinishedBulkItems;
 
     static Ad2()
     {
-        var harmony = new Harmony("com.local.anon.ad2");
         GeneratedUnfinishedBulkItems = ThingDef.Named("GeneratedUnfinishedBulkItems");
-        harmony.PatchAll(Assembly.GetExecutingAssembly());
-        //RecipeIconsCompatibility(harmony);
-        GenRecipes();
+        new Harmony("com.local.anon.ad2").PatchAll(Assembly.GetExecutingAssembly());
+        genRecipes();
     }
 
-    private static string TransformRecipeLabel(string s)
+    private static string transformRecipeLabel(string s)
     {
         if (s.NullOrEmpty())
         {
@@ -43,9 +40,9 @@ public class Ad2
         return s.TrimEnd();
     }
 
-    public static void LogMessage(string message, bool forced = false, bool warning = false)
+    private static void logMessage(string message, bool forced = false, bool warning = false)
     {
-        if (!forced && !Ad2Mod.settings.verboseLogging)
+        if (!forced && !Ad2Mod.Settings.VerboseLogging)
         {
             return;
         }
@@ -59,68 +56,68 @@ public class Ad2
         Log.Message($"[BulkRecipeGenerator]: {message}");
     }
 
-    private static void RememberRecipeLabel(RecipeDef r)
+    private static void rememberRecipeLabel(RecipeDef r)
     {
-        var label = TransformRecipeLabel(r.LabelCap);
-        if (dictLR.TryAdd(label, r))
+        var label = transformRecipeLabel(r.LabelCap);
+        if (dictLr.TryAdd(label, r))
         {
             return;
         }
 
-        if (dictLR[label] == r)
+        if (dictLr[label] == r)
         {
             return;
         }
 
-        LogMessage($"Ambiguous recipe label: {label}. Right click menu will be disabled for this one.", false,
+        logMessage($"Ambiguous recipe label: {label}. Right click menu will be disabled for this one.", false,
             true);
-        dictLR[label] = null;
+        dictLr[label] = null;
     }
 
-    private static void RememberNewRecipe(RecipeDef src, RecipeDef n)
+    private static void rememberNewRecipe(RecipeDef src, RecipeDef n)
     {
-        if (!dictON.ContainsKey(src))
+        if (!dictOn.ContainsKey(src))
         {
-            dictON.Add(src, []);
+            dictOn.Add(src, []);
         }
 
-        dictON[src].Add(n);
+        dictOn[src].Add(n);
 
-        if (!dictNO.TryAdd(n, src))
+        if (!dictNo.TryAdd(n, src))
         {
             Log.Error($"BulkRecipeGenerator: dictNO already contains {n.defName} ({n.label})");
             return;
         }
 
-        RememberRecipeLabel(src);
-        RememberRecipeLabel(n);
+        rememberRecipeLabel(src);
+        rememberRecipeLabel(n);
     }
 
     public static bool IsSrcRecipe(RecipeDef recipe)
     {
-        return dictON.ContainsKey(recipe);
+        return dictOn.ContainsKey(recipe);
     }
 
     public static bool IsNewRecipe(RecipeDef recipe)
     {
-        return dictNO.ContainsKey(recipe);
+        return dictNo.ContainsKey(recipe);
     }
 
     public static RecipeDef GetSrcRecipe(RecipeDef recipe)
     {
-        dictNO.TryGetValue(recipe, out var res);
+        dictNo.TryGetValue(recipe, out var res);
         return res;
     }
 
     public static List<RecipeDef> GetNewRecipesList(RecipeDef recipe)
     {
-        dictON.TryGetValue(recipe, out var res);
+        dictOn.TryGetValue(recipe, out var res);
         return res;
     }
 
     public static RecipeDef GetRecipeByLabel(string label)
     {
-        dictLR.TryGetValue(label, out var res);
+        dictLr.TryGetValue(label, out var res);
         return res;
     }
 
@@ -149,36 +146,7 @@ public class Ad2
         return res;
     }
 
-    private static void RecipeIconsCompatibility(Harmony harmony)
-    {
-        try
-        {
-            ((Action)(() =>
-            {
-                if (!LoadedModManager.RunningModsListForReading.Any(x => x.Name == "Recipe icons"))
-                {
-                    return;
-                }
-
-                var methodForPatch = AccessTools.Method("RecipeIcons.RecipeTooltip:DoGUI");
-                if (methodForPatch == null)
-                {
-                    LogMessage(
-                        "BulkRecipeGenerator: LoadedModManager said that RecipeIcons enabled, but methodForPatch == null," +
-                        " so RecipeIcons patch will not be applied.", false, true);
-                    return;
-                }
-
-                harmony.Patch(methodForPatch,
-                    postfix: new HarmonyMethod(typeof(FloatMenuOption_DoGUI_Patch), "Postfix"));
-            }))();
-        }
-        catch (TypeLoadException)
-        {
-        }
-    }
-
-    private static RecipeDef MkNewRecipe(RecipeDef rd, int factor)
+    private static RecipeDef mkNewRecipe(RecipeDef rd, int factor)
     {
         if (rd.ingredients.Count == 0 || rd.products.Count != 1)
         {
@@ -187,9 +155,9 @@ public class Ad2
 
         var r = new RecipeDef
         {
-            defName = rd.defName + $"_{factor}x",
-            label = rd.label + $" x{factor}",
-            description = rd.description + $" (x{factor})",
+            defName = $"{rd.defName}_{factor}x",
+            label = $"{rd.label} x{factor}",
+            description = $"{rd.description} (x{factor})",
             jobString = rd.jobString,
             modContentPack = rd.modContentPack,
             workSpeedStat = rd.workSpeedStat,
@@ -208,7 +176,7 @@ public class Ad2
             researchPrerequisite = rd.researchPrerequisite,
             factionPrerequisiteTags = rd.factionPrerequisiteTags
         };
-        if (!Ad2Mod.settings.useSameQualityForAll && rd.products[0].thingDef.HasComp(typeof(CompQuality)))
+        if (!Ad2Mod.Settings.UseSameQualityForAll && rd.products[0].thingDef.HasComp(typeof(CompQuality)))
         {
             for (var index = 0; index < factor; index++)
             {
@@ -235,15 +203,13 @@ public class Ad2
         var IVGClass = (Type)Traverse.Create(rd).Field("ingredientValueGetterClass").GetValue();
         Traverse.Create(r).Field("ingredientValueGetterClass").SetValue(IVGClass);
 
-        //if (rd.unfinishedThingDef != null)
-        //    Log.Message(rd.label + " uses unfinishedThingDef " + rd.unfinishedThingDef.label+"  an is removed");
         return r;
     }
 
-    private static void GenRecipes()
+    private static void genRecipes()
     {
         var allRecipes = DefDatabase<RecipeDef>.AllDefsListForReading;
-        var srcs = new List<RecipeDef>();
+        var recipes = new List<RecipeDef>();
         foreach (var recipe in allRecipes)
         {
             if (recipe.products.Count != 1)
@@ -256,35 +222,34 @@ public class Ad2
                 continue;
             }
 
-            if (!Ad2Mod.settings.makeBulkForQuality && recipe.products[0].thingDef.HasComp(typeof(CompQuality)))
+            if (!Ad2Mod.Settings.MakeBulkForQuality && recipe.products[0].thingDef.HasComp(typeof(CompQuality)))
             {
                 continue;
             }
 
-            if (recipe.WorkAmountTotal(null) > Ad2Mod.settings.maxtimecutoff * 60)
+            if (recipe.WorkAmountTotal(null) > Ad2Mod.Settings.MaxTimeCutoff * 60)
             {
                 continue;
             }
 
-            srcs.Add(recipe);
-            //Log.Message(recipe.label + "\t" + recipe.defName + "\t" + recipe.WorkAmountTotal(null)/60);
+            recipes.Add(recipe);
         }
 
-        var RecipesUsers = new List<ThingDef>();
-        foreach (var recipe in srcs)
+        var recipesUsers = new List<ThingDef>();
+        foreach (var recipe in recipes)
         {
             var lastOne = false;
             foreach (var factor in mulFactors)
             {
-                if (factor * recipe.WorkAmountTotal(null) > Ad2Mod.settings.maxtimecutoff * 60)
+                if (factor * recipe.WorkAmountTotal(null) > Ad2Mod.Settings.MaxTimeCutoff * 60)
                 {
                     lastOne = true;
                 }
 
-                var newRecipe = MkNewRecipe(recipe, factor);
+                var newRecipe = mkNewRecipe(recipe, factor);
                 if (newRecipe == null)
                 {
-                    LogMessage(
+                    logMessage(
                         $"BulkRecipeGenerator: newRecipe == null  on {recipe.label}, this should not happen normally",
                         false, true);
                     continue;
@@ -295,13 +260,13 @@ public class Ad2
 
                 DefDatabase<RecipeDef>.Add(newRecipe);
 
-                RememberNewRecipe(recipe, newRecipe);
+                rememberNewRecipe(recipe, newRecipe);
 
                 foreach (var ru in recipe.AllRecipeUsers)
                 {
-                    if (!RecipesUsers.Contains(ru))
+                    if (!recipesUsers.Contains(ru))
                     {
-                        RecipesUsers.Add(ru);
+                        recipesUsers.Add(ru);
                     }
 
                     if (newRecipe.recipeUsers == null)
@@ -315,14 +280,14 @@ public class Ad2
                     break;
                 }
 
-                if (Ad2Mod.settings.limitToX5)
+                if (Ad2Mod.Settings.LimitToX5)
                 {
                     break;
                 }
             }
         }
 
-        foreach (var ru in RecipesUsers)
+        foreach (var ru in recipesUsers)
         {
             Traverse.Create(ru).Field("allRecipesCached").SetValue(null);
         }

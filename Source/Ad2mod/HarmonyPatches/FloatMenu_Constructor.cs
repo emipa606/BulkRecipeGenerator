@@ -5,42 +5,42 @@ using Verse;
 namespace Ad2mod;
 
 [HarmonyPatch(typeof(FloatMenu), MethodType.Constructor, typeof(List<FloatMenuOption>))]
-internal class PatchFloatMenu
+internal class FloatMenu_Constructor
 {
-    private static readonly List<FloatMenu> trackedFM = [];
-    private static readonly List<FloatMenuOption> trackedFMO = [];
+    private static readonly List<FloatMenu> trackedFm = [];
+    private static readonly List<FloatMenuOption> trackedFmo = [];
 
     public static bool IsTracked(FloatMenuOption fmo)
     {
-        return trackedFMO.Contains(fmo);
+        return trackedFmo.Contains(fmo);
     }
 
     public static bool IsTracked(FloatMenu fm)
     {
-        return trackedFM.Contains(fm);
+        return trackedFm.Contains(fm);
     }
 
     public static void Untrack(FloatMenuOption fmo)
     {
-        trackedFMO.Remove(fmo);
+        trackedFmo.Remove(fmo);
     }
 
     public static void Untrack(FloatMenu fm)
     {
-        trackedFM.Remove(fm);
+        trackedFm.Remove(fm);
     }
 
     private static void Postfix(FloatMenu __instance, List<FloatMenuOption> ___options)
     {
-        if (!BillStack_DoListing_Patch.inDoListing)
+        if (!BillStack_DoListing.InDoListing)
         {
             return;
         }
 
-        trackedFM.Add(__instance);
+        trackedFm.Add(__instance);
         foreach (var opt in ___options)
         {
-            trackedFMO.Add(opt);
+            trackedFmo.Add(opt);
         }
     }
 }
