@@ -4,7 +4,7 @@ using Verse;
 namespace Ad2mod;
 
 [HarmonyPatch(typeof(RecipeDef), nameof(RecipeDef.AvailableNow), MethodType.Getter)]
-public class RecipeDef_AvailableNow
+public static class RecipeDef_AvailableNow
 {
     public static bool Postfix(bool __result, RecipeDef __instance)
     {

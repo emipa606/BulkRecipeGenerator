@@ -8,7 +8,7 @@ using Verse;
 namespace Ad2mod;
 
 [StaticConstructorOnStartup]
-public class Ad2
+public static class Ad2
 {
     private static readonly int[] mulFactors = [5, 10, 25, 50];
 

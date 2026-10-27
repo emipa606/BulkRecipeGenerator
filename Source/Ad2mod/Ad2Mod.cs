@@ -11,7 +11,6 @@ internal class Ad2Mod : Mod
     private static string currentVersion;
 
     private readonly NumField defaultMaxTimeField = new(0, int.MaxValue);
-    //private readonly NumField defaultThresholdField = new NumField();
 
     public Ad2Mod(ModContentPack content) : base(content)
     {
@@ -105,7 +104,7 @@ internal class Ad2Mod : Mod
         GUI.contentColor = Color.white;
     }
 
-    private class NumField(int min = 0, int max = 120)
+    private sealed class NumField(int min = 0, int max = 120)
     {
         private string buffer;
 

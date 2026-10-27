@@ -5,7 +5,7 @@ using Verse;
 namespace Ad2mod;
 
 [HarmonyPatch(typeof(FloatMenu), MethodType.Constructor, typeof(List<FloatMenuOption>))]
-internal class FloatMenu_Constructor
+internal static class FloatMenu_Constructor
 {
     private static readonly List<FloatMenu> trackedFm = [];
     private static readonly List<FloatMenuOption> trackedFmo = [];
@@ -30,7 +30,7 @@ internal class FloatMenu_Constructor
         trackedFm.Remove(fm);
     }
 
-    private static void Postfix(FloatMenu __instance, List<FloatMenuOption> ___options)
+    public static void Postfix(FloatMenu __instance, List<FloatMenuOption> ___options)
     {
         if (!BillStack_DoListing.InDoListing)
         {
